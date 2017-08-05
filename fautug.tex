@@ -1,0 +1,487 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper, margin=1.2in]{geometry}
+\usepackage{hyperref}
+
+
+\hypersetup{
+	pdftitle={fauthesis User's Guide},											% title
+	pdfauthor={C. Beetle},													% author
+	pdfsubject={How to use the fauthesis document class in LaTeX2e.},					% subject of the document
+	pdfnewwindow=true,													% links in new window
+	pdfkeywords={FAU, thesis, dissertation, guide, TeX, LaTeX, class, style, format},		% list of keywords
+	colorlinks=true,															% false: boxed links; true: colored links
+	linkcolor=[rgb]{0.7,0.0,0.0},												% color of internal links
+	citecolor=[rgb]{0.0,0.4,0.4},												% color of links to bibliography
+	filecolor=[rgb]{0.0,0.0,0.8},												% color of file links
+	urlcolor=[rgb]{0.0,0.0,0.8}													% color of external links
+}
+
+
+\newcommand\guide{{http://www.fau.edu/graduate/forms-and-procedures/degree-completion/thesis-and-dissertation/index.php}}
+\newcommand\home{{http://physics.fau.edu/\~cbeetle/FAUThesis/}}
+
+
+\title{The \texttt{fauthesis} Document Class:\\ A User's Guide}
+\author{Christopher Beetle%
+	\footnote{\href{mailto:cbeetle@physics.fau.edu}{\nolinkurl{cbeetle@physics.fau.edu}}\hfill
+		Document Class URL: \url\home}}
+\date{September 23, 2014, v.1.0}
+
+
+\setlength\parskip{2pt}
+\newcommand\code[1]{{\normalfont\texttt{\let\dv\textsl\chardef\\="5C #1}}}
+
+
+\begin{document}
+
+\maketitle
+
+
+
+\section{Introduction}
+
+The file \code{fauthesis.cls} contains a \LaTeXe\ document class designed to help students at Florida Atlantic University (FAU) create Master's Theses and Doctoral Dissertations using the \LaTeX\ document preparation system.  It aims to help an author (a) maintain FAU's required margin and style conventions and (b) generate the required pieces of boilerplate text on the title page and other preliminary pages of a thesis automatically so as to avoid typographical and formatting errors.  These requirements are described in detail in FAU's 
+\href\guide{\textit{Graduate Thesis and Dissertation Guidelines}} 
+\cite{GC:guide}, available online.
+
+A thesis is organized similarly to a book in many ways.  A book contains front matter including a title page, copyright information, acknowledgements and often a dedication, and tables listing the contents of its main body.  These are followed by several chapters of the main body of the text, possibly one or more appendices, and a bibliography.  A thesis, however, usually contains several additional preliminary pages presenting information peculiar to its academic purpose.  These include a signature page where members of the author's Supervisory Committee and other University officials approve the thesis, a brief biography of its author, and an abstract page summarizing its contents.
+
+FAU's 
+\href\guide{manuscript guidelines} 
+dictate much of the structure and content of the preliminary pages of an FAU thesis, but leave the format of the main body of the text somewhat more at the discretion of the author.  The \code{fauthesis} document class reflects this dichotomy.  The preliminary pages are largely composed using rigid templates from bits of data specified by the author in the \code{.tex} file containing the text his or her thesis.  The main body, in contrast, is generated using standard \LaTeXe\ syntax.  Authors unfamiliar with that syntax are advised to consult a suitable manual \cite{L:latex, KD:guide, L3:latex2e, OPHS:intro, WB:latex}.
+
+The remainder of this User's Guide outlines the structure of a \code{.tex} file that uses the \code{fauthesis} document class, and describes the steps the author should take to take advantage of its features.  This document is divided in four sections.  These outline options that may be passed to the \code{fauthesis} class in the \verb=\documentclass= command, followed by commands that are meant to be used in the document preamble (between \verb=\documentclass{fauthesis}= and \verb=\begin{document}=), in the front matter (between \verb=\begin{document}= and the first \verb=\chapter=), and in the main body of the text, respectively.  Before getting into these details, however, there are a few practical and logistical issues to address.
+%
+\begin{description}
+
+\item[Installation]
+\href\home{Download} the \code{fauthesis.cls} file and copy it into the directory containing the \code{.tex} file of the text of your thesis.  \TeX\ usually searches the document directory for \code{.cls} (and \code{.sty}) files it is asked to load.  If \TeX\ is properly configured to do this, then it should not be necessary to install \code{fauthesis.cls} at the system level.
+
+\item[Compatibility]
+The \code{fauthesis} document class is built on top of the standard \LaTeXe\ \code{report} document class.  Consequently, it should be compatible with most common package (i.e., \code{.sty}) files.  There are, however, some notable exceptions.  Most importantly, \textbf{do not load} the \code{geometry}  package, nor any other package that adjusts the margins of your document.  The \code{fauthesis} class sets precise margins compatible with FAU's 
+\href\guide{manuscript guidelines}.
+Similarly, avoid packages that modify how chapter headings are typeset.  These will likely change the required 2-inch margin at the top of the first pages of chapters.  A list of packages known to be incompatible with the \code{fauthesis} document class may be found in Appendix \ref{incomp} below.
+
+\item[Printing]
+Most authors today use PDF\LaTeX\ to generate a \code{.pdf} output file from their \code{.tex} source.  If you use software from the Adobe Acrobat family to print the final, paper copy of your thesis for binding, then be sure \textbf{not to select} ``Auto-Rotate and Center'' and to set ``Page Scaling'' to ``None'' in the Print dialog.  Otherwise, your margins will be incorrect on the printed page even if they are correct in the \code{.pdf} file.
+
+\item[Support]
+Although the output of the \code{fauthesis} document class has been reviewed and generally approved by FAU's Graduate College, the Graduate College does not support or maintain the class file itself.  The class file is the sole and independent work of its author, and any questions or concerns regarding it should be \href{mailto:cbeetle@physics.fau.edu}{addressed directly to him}.
+
+Furthermore, please note that while the Graduate College recommends using the class file, doing so does not necessarily guarantee that the format of your thesis will be approved.  (It is more likely, but not guaranteed.)  If a problem of this sort arises, I will make every effort to work with the affected student to resolve it within a reasonable period of time (roughly one week).  If you anticipate such problems, or even if you don't, please plan to submit your thesis to the Graduate College for format review early enough that time remains to fix a problem before the Graduate College's posted deadlines for graduation.
+
+\item[License]
+The \code{fauthesis} document class is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but \textit{without any warranty}; without even the implied warranty of \textit{merchantability} or \textit{fitness for a particular purpose}.  See the \href{http://www.gnu.org/licenses/gpl.html}{GNU General Public License} for more details.
+\end{description}
+
+
+
+\section{Class Options}\label{options}
+
+The \texttt{fauthesis} document class extends the standard \LaTeXe\ \code{report} document class.  It consequently recognizes many of the same class options that the \code{report} class does.  Most important among these are the options (\code{\dv{10pt}|11pt|12pt}), which set the default font size, and the \code{fleqn} and \code{leqno} options, which modify the alignment of equations and the placement of equation labels, respectively.  See the \textit{\LaTeX\ User's Guide} \cite{L:latex}, or another \LaTeX\ reference, for details.  Note, however, that the \code{notitlepage} and \code{twocolumn} options from the \code{report} class are explicitly disabled in the \code{fauthesis} class and will only produce a warning if invoked.  These are fundamentally incompatible with FAU's 
+\href\guide{manuscript guidelines}.
+
+In addition to the standard \code{report} class options, \code{fauthesis} defines a few additional options that are peculiar to FAU dissertations and theses.  Each of these has a default, which is the recommended value.  Generally, none of these need be specified.
+%
+\begin{description}
+
+\item[Degree Type] \dotfill\ (\code{\dv{phd}|ded|ms|ma})\\
+This sets the type of degree the author is seeking.  It defines some pieces of text that appear on the title page and a couple other places.  The default is \code{phd}.
+
+\item[Research Co-Advisors] \dotfill\ (\code{\dv{nocoadvisors}|coadvisors})\\
+This class option exists for the relatively rare situation that the author's Supervisory Committee includes two Co-Advisors who made \textit{equal contributions} to guiding the author's research.  The slightly more common situation in which the author has a primary research Advisor and, for example, an Academic Co-Chair on his or her Supervisory Committee should be handled using the \code{nocoadvisors} option and the \verb=\coadvisor= command described in Section \ref{committee} below.  The various possibilities are discussed in more detail there.  The default is \code{nocoadvisors}.
+
+\item[Dedication Page Format] \dotfill\ (\code{\dv{shortdedication}|longdedication})\\
+The \code{shortdedication} class option sets the author's dedication, if specified, as a single line of centered text roughly midway down the dedication page.  The \code{longdedication} class option sets it instead as a paragraph on a page with a heading like the other preliminary pages.  The default is \code{shortdedication}.
+
+\item[Contents and List Page Headings] \dotfill\ (\code{\dv{titletables}|chaptertables})\\
+FAU's \href{\guide}{manuscript guidelines} prescribe the heading on the table of contents to consist of the thesis title in a simple block format.  This may differ from the format used for chapter headings in the body of the text.  The default \code{titletables} class option produces this mandatory format for the Table of Contents and the subsequent Lists of Tables and Figures.  An author may use the \code{chaptertables} class option to produce \textit{unofficial} copies of a thesis where, like a typical book, the these headings use the same format as the chapter headings, and the Table of Contents is titled simply ``Contents.''
+
+\item[Chapter Heading Styles] \dotfill\ (\code{\dv{simplechapters}|classicchapters})\\
+The \code{fauthesis} document class offers a simple, but still somewhat flexible scheme to allow an author to control the formatting the titles of chapters, sections, and other divisions of their thesis.  This is described in some detail in Section~\ref{S:headings} below.  The class options listed here allow authors to choose between two common formatting schemes for chapter headings.  The \code{simplechapters} option, which is the default, simply lists the chapter number and title in bold, centered text at the top of the page.  The \code{classicchapters} option produces chapter headings similar to those in a book.
+
+\item[Appendix Heading Styles] \dotfill\ (\code{\dv{titleappendices}|chapterappendices})\\
+FAU's \href{\guide}{manuscript guidelines} require that any appendices at the end of the document should be preceded by a page with the heading ``Appendices'' in the simple, block style used for the manuscript title.  Each appendix then begins on a new page, with a heading in the same block heading style, regardless of the heading style used for chapters in the main body of the text.  In addition, appendices have only a one-inch top margin, rather than the two inches required for chapters.  The default \code{titleappendices} class option implements these conventions.  An author may use the \code{chapterappendices} class option to produce \textit{unofficial} copies of a thesis where appendices have headings identical to those for chapters in the main body of the text.
+
+\item[Line Spacing] \dotfill\ (\code{\dv{doublespace}|sesquispace|singlespace})\\
+This defines the default line spacing to use throughout the document.  The line spacing may be changed locally using commands described in Section \ref{main} below.  Note, however, that FAU requires official theses to be double-spaced, so \code{doublespace} is the default.
+
+\item[Margins] \dotfill\ (\code{\dv{2014margins}|2010margins})\\
+The required margins changed slightly in the 2014 update of the \href{\guide}{manuscript guidelines}.  The default \code{2014margins} class option uses the new conventions.  The \code{2010margins} class option remains available, however, for backward compatibility.
+
+\item[PDF Link Formatting] \dotfill\ (\code{\dv{print}|online})\\
+This tells the \code{hyperref} package, provided it has been loaded, whether to allow links and entries in the table of contents to be formatted using a different color font.  The \code{online} version assumes the author will set these colors by hand, as is done in the sample file.  The \code{print} option overrides any such settings, changing all of the colors to black, which is required by the Graduate College for the printed version of a thesis.
+\end{description}
+
+
+
+\section{Preamble Material}\label{preamble}
+
+The preamble is the part of a \code{.tex} file that comes after the \verb=\documentclass{fauthesis}= command and before the \verb=\begin{document}= command.  This is where the author can load package files and define commands or macros to use in the main body of the text.
+
+There are various data the \code{fauthesis} class will need to generate the title, copyright, signature and abstract pages.  The author should set these in the preamble using the commands described in this section.  Some of the commands in this list are optional, and these are noted explicitly and marked with an asterisk (*).  Omitting any of the other commands will produce an error when \LaTeX\ runs.  Note that all proper names of people, departments and colleges should be capitalized (and spelled!)\ correctly as arguments to these commands.
+
+
+
+\subsection{General Information}\label{general}
+
+Specifying the author's Supervisory Committee for the signature page can sometimes be a little complicated.  We therefore collect the commands used to do that in Section \ref{committee} below.  This Section describes all of the other preamble commands used to generate the preliminary pages of an FAU thesis.
+%
+\begin{description}
+
+\item[Thesis Title] \dotfill\ \verb=\title{TITLE}=\\
+This is the title of the thesis, exactly as it should appear at the top of the abstract page.  By default, the title will be converted automatically to ALL CAPITALS when it appears on the title and signature pages.  The command \verb=\\= may be used to set line breaks manually in the title on these two pages.  Such line breaks are ignored when the title appears a third time in the table at the top of the abstract page.
+
+\item[Author's Name] \dotfill\ \verb=\author{NAME}=\\
+This is the author's name, exactly as it should appear on the title page and elsewhere.  The author may not use different forms of his or her name in different places.
+
+\item[Author's Gender] \dotfill\ \verb=\gender{(f|m)}=\\
+This is the author's gender, which is needed when typesetting some of the boilerplate text on the signature page.
+
+\item[Date of Graduation] \dotfill\ \verb=\graduation{MONTH}{YEAR}=\\
+This is the month and year during which the author will graduate.  Note that this should not be the month during which the thesis is finished or defended, but the month when the author will be invited to march at the graduation ceremony.
+
+\item[Academic Department] \dotfill\ \verb=\department{DEPARTMENT}=\\
+This is the name of the author's academic department or program, exactly as it should appear on the signature page.  For example, a student graduating from the Department of Physics would use \verb=\department{Department of Physics}=.
+
+\item[Department Chair] \dotfill\ \verb=\chair[Dr.]{NAME}[Ph.D.]=\\
+This is the proper name of the Chair of the author's academic department or program, exactly as it should appear on the signature page.
+%
+\begin{itemize}
+\item There are optional arguments both before and after the Chair's proper name.  These are used to specify his or her salutation and academic credentials, respectively.  The default salutation is ``Dr.'' and the default credential is ``Ph.D.,'' as shown above. While the salutation will almost always be the default, the credentials may vary.  For example, a student graduating from the Charles E.~Schmidt College of Biomedical Science whose Department Chair holds both an M.D.\ and a Ph.D.\ should use \verb=\chair{NAME}[M.D., Ph.D.]=, whereas a student graduating from the College of Engineering might use \verb=\chair{NAME}[Ph.D., P.E.]=.  In all cases, these options should be set according to how the Department Chair in question actually signs his or her name.  The author is responsible to ensure that this information appears correctly in his or her thesis.
+\end{itemize}
+
+\item[\llap{*}Chair's Title] \dotfill\ \verb=\chairtitle{TITLE}=\\
+This command is optional.  It changes the title of the author's Department Chair on the signature page from the default ``Chair'' to, for example, ``Director'' or ``Acting Chair.''
+
+\item[Awarding College] \dotfill\ \verb=\college{COLLEGE}=\\
+The is the full, proper name of the College to which the author's academic department or program belongs, exactly as it should appear on the signature page.  Note that the name of the College should be capitalized correctly, but should not include a leading ``the.''   This is included automatically, where appropriate, by the \code{fauthesis} class.
+
+\item[College Dean] \dotfill\ \verb=\dean[Dr.]{NAME}[Ph.D.]=\\
+This is the proper name of the Dean of the College that will award the author's degree, exactly as it should appear on the signature page.  Optional arguments before and after the Dean's proper name specify his or her salutation and academic credentials.  See the discussion under Department Chair above for details.
+
+\item[\llap{*}Dean's Title] \dotfill\ \verb=\deantitle{TITLE}=\\
+This command is optional.  It changes the title of the author's College Dean on the signature page from the default ``Dean'' to, for example, ``Interim Dean.''
+
+\item[Graduate College Dean] \dotfill\ \verb=\dgc[Dr.]{NAME}[Ph.D.]=\\
+This is the proper name of the Dean of the University's Graduate College, exactly as it should appear on the signature page.  Optional arguments before and after the Graduate College Dean's proper name specify his or her salutation and academic credentials.  See the discussion under Department Chair above for details.
+
+\item[\llap{*}Graduate College Dean's Title] \dotfill\ \verb=\dgctitle{TITLE}=\\
+This command is optional.  It changes the title of the Graduate College Dean on the signature page from the default ``Dean'' to, for example, ``Interim Dean.''
+
+\end{description}
+
+
+
+\subsection{Supervisory Committee}\label{committee}
+
+Typically, the author's Supervisory Committee will consist of a single research Advisor, who chairs the Committee, as well as a number of other members called Supervisors.  To specify such a Committee in the \code{fauthesis} document class, the author needs only the \verb=\advisor= and \verb=\supervisor= commands from the list below.  The latter may be issued multiple times in the document preamble, once for each Committee member (other than the Advisor).  Note that Supervisors will be listed on the signature page, after the Advisor, in the same order in which the corresponding \verb=\supervisor= commands were issued in the preamble.
+
+Sometimes, however, Committees include a second member whose role should be indicated on the signature page.  Such a member is called a Co-Advisor below.  Moreover, when a Committee does include a Co-Advisor, there are two further possibilities.  The Co-Advisor either may have participated fully and equally with the Advisor in guiding the author's research, or may have performed a secondary, or largely academic, function.  The former situation is distinguished by specifying the \code{coadvisors} option when loading the \code{fauthesis} document class.  The latter corresponds to the \code{nocoadvisors} document class option, which is the default.  From a practical point of view, the only difference in the \LaTeX\ output under the two options is that, when the \code{coadvisors} class option is active, the Advisor and the Co-Advisor are \textit{both} recognized in the boilerplate text at the top of the signature page as having directed the author's research.  Otherwise, only the Advisor is recognized.  It is entirely at the discretion of the Advisor, the Co-Advisor and the author to decide which option best fits the circumstances.
+
+The commands below allow an author to specify a single Advisor, a single optional Co-Advisor, titles and departmental affiliations for each, and multiple additional Supervisors who sit on his or her Supervisory Committee.  The Advisor will appear first in the signature list, the Co-Advisor second if specified, followed by all Supervisors at the end.  The template is hopefully flexible enough to accommodate most authors' needs.
+%
+\begin{description}
+
+\item[Research Advisor] \dotfill\ \verb=\advisor[Dr.]{NAME}[Ph.D.]=\\
+This is the proper name of the student's primary research Advisor, exactly as it should appear on the signature page.  If the \code{coadvisors} option is active, then this Co-Advisor will appear first in the signature list on the signature page, and will be acknowledged first in the boilerplate text at its top.  Optional arguments before and after the Advisor's proper name specify his or her salutation and academic credentials.  See the discussion under Department Chair in the previous Section for details.
+
+\item[\llap{*}Research Advisor's Title] \dotfill\ \verb=\advisortitle{TITLE}=\\
+This command is optional.  It changes the title of the author's research Advisor on the signature page from one of the following defaults:
+%
+\begin{itemize}
+\item If the \code{nocoadvisors} document class option is active, then the default value is ``Dissertation Advisor'' or ``Thesis Advisor'', depending on the degree sought.
+%
+\item If the \code{coadvisors} option is active, then the default is ``Dissertation Co-Advisor'' or ``Thesis Co-Advisor,'' depending on the degree sought, \textit{unless the author has explicitly specified a} \verb=\coadvisortitle=.  In that case, the default value under the \code{coadvisors} class option reverts to that under the \code{nocoadvisors} class option.
+\end{itemize}
+
+\item[\llap{*}Research Advisor's Department] \dotfill\ \verb=\advisordepartment{DEPARTMENT}=\\
+This command is optional.  It changes the Advisor's departmental affiliation from its default value, which is the author's own academic department or program set using the \verb=\department= command above.  This might be useful if, for example, the Advisor is affiliated with more than one academic department or program, or even just with a single department different from the author's own.  In the latter case, the author will usually specify a \verb=\coadvisor= from his or her own department.
+
+\item[\llap{*}Research Co-Advisor] \dotfill\ \verb=\coadvisor[Dr.]{NAME}[Ph.D.]=\\
+This command is optional \textit{unless the \code{coadvisors} document class option is active}.  It specifies the proper name of the author's research Co-Advisor, exactly as it should appear on the signature page.
+%
+\begin{itemize}
+\item If the \code{nocoadvisors} document class option is active, then this command specifies a secondary research supervisor, academic advisor, or generally a member of the author's Supervisory Committee whose role should appear on the signature page.  The Co-Advisor \textit{will not} be acknowledged in the boilerplate text at the top of the signature page as having directed the author's research.  However, the Co-Advisor's name will appear second in the signatory list with a title beneath.
+%
+\item If the \code{coadvisors} document class option is active, then the Co-Advisor \textit{will} be acknowledged in the boilerplate text at the top of the signature page as having directed the author's research, and will appear second in the signatory list with a title beneath.
+\end{itemize}
+%
+Optional arguments before and after the Co-Advisor's proper name specify his or her salutation and academic credentials.  See the discussion under Department Chair in the previous Section for details.
+
+\item[\llap{*}Research Co-Advisor's Title] \dotfill\ \verb=\coadvisortitle{TITLE}=\\
+This command is optional.  It changes the Co-Advisor's title on the signature page from one of the following defaults:
+%
+\begin{itemize}
+\item If the \code{nocoadvisors} document class option is active, then the default value is ``Dissertation Co-Advisor'' or ``Thesis Co-Advisor'', depending on the degree sought.
+%
+\item If the \code{coadvisors} option is active, then the default is identical to the Advisor's title.  This may be either a title set by the author using the \verb=\advisortitle= command above or the default value if that command has not been used.
+\end{itemize}
+
+\item[\llap{*}Research Co-Advisor's Department] \dotfill\ \verb=\coadvisordepartment{DEPARTMENT}=\\
+This command is optional, and in fact does nothing unless the \code{coadvisors} class option is active.  It changes the Co-Advisors's departmental affiliation on the signature page from its default value, which is the author's own academic department or program.  Note that at least one of the author's Co-Advisors should be affiliated with the department offering his or her degree.
+
+\item[Supervisory Committee Member] \dotfill\ \verb=\supervisor[Dr.]{NAME}[Ph.D.]=\\
+This adds the proper name of a Committee member to the list on the signature page, exactly as it should appear there.  Optional arguments before and after the Supervisor's proper name specify his or her salutation and academic credentials.  See the discussion under Department Chair in the previous Section for details.  Unlike all of the other commands above, this may be used multiple times.  Supervisors will be listed on the signature page in the same order that the commands were issued.
+
+\end{description}
+
+
+\subsection{Signature Page Formatting}\label{signature}
+
+Generating a decent-looking signature page is easily the most delicate typographical issue that arises in formatting an FAU thesis.  In view of this, the \code{fauthesis} document class allows authors a modicum of control over the spacing of signatures on the page, and over the boilerplate text at the top.  Both of these commands are optional.  The first is much more likely to be useful than the second.
+%
+\begin{description}
+
+\item[\llap{*}Signature Block Spacing] \dotfill\ \verb=\signaturepush{NUMBER}=\\
+This command modifies the vertical spacing between the two blocks of signatures on the signature page: the one at the upper right for members of the author's supervisory committee, and the one at the lower left for University officials.  Usually, the bottom of the upper right block is at roughly the same vertical position on the page as the top of the lower left block.  The argument \code{NUMBER} can be any decimal value, and positive values will insert empty vertical space between the blocks, while negative values will cause them to overlap.  The default is zero.
+
+\item[\llap{*}Signature Page Text] \dotfill\ \verb=\begin{signaturetext} TEXT \end{"}=\\
+This environment allows the author to override the \code{fauthesis} document class's automatic generation of the official text at the top of the signature page.  Note that the \code{coadvisors} class option and the commands described in the previous section already allow a great deal of flexibility in how this text will appear, and authors are \textit{strongly} encouraged to use the automatically generated version if possible.  However, in very rare circumstances, the default text may simply not be appropriate.  This environment, which must appear in the document preamble, specifies an exact wording of the paragraph at the top of the signature page.  If this option used, despite the exhortations not to do so above, it is of course entirely up to the author to make sure that the specified wording is approved by the Graduate College.
+
+\end{description}
+
+
+\section{Front Matter}
+
+The front matter of a \LaTeX\ document comprises everything that appears before the first page of the first chapter of the actual text.  The front matter of an FAU thesis consists of the title, copyright, signature, vita, acknowledgements, abstract, and dedication pages, as well as the Table of Contents and Lists of Tables and Figures.  FAU's 
+\href\guide{manuscript guidelines} 
+require that the front matter appear in exactly the order listed above, although the vita and dedication pages are optional.  The \code{fauthesis} document enforces this order, and will produce warnings both during execution and printed at the top of the page in the output file to help the author ensure the correct structure.
+
+After the preamble, the author's \code{.tex} file should contain the \verb=\begin{document}= command, followed immediately by the \verb=\frontmatter= command.  These standard pieces of \LaTeX\ should be followed immediately by the following commands specific to the \code{fauthesis} document class, in the order shown.  As before, optional elements are noted explicitly and marked with an asterisk (*).  Note, however, that if either of the optional elements are included, then they must appear in the positions shown.
+%
+\begin{description}
+
+\item[Title Page] \dotfill\ \verb=\maketitle=\\
+This command generates a title page for the thesis, formatted according to FAU's 
+\href\guide{manuscript guidelines}, 
+using data specified in the preamble.
+
+\item[Copyright Page] \dotfill\ \verb=\makecopyright[TEXT]=\\
+This command generates a copyright page for the thesis.  By default, copyright is reserved to the author starting in the year of his or her graduation.  The optional argument overrides this default with any text the author specifies.
+
+\item[Signature Page] \dotfill\ \verb=\makesignature=\\
+This command generates the signature page for the thesis using data specified in the preamble.  If the signature page appears cramped, Section \ref{signature} describes commands that modify its spacing slightly.  These commands must appear in the document preamble, however, not in the front matter.  Trial and error is the best way to find values for the arguments that produce satisfactory output.  In the end, of course, the final formatting of this page will have to be approved during the Graduate College's format review.
+
+\item[\llap{*}Personal Vita] \dotfill\ \verb=\begin{vita}[TITLE] TEXT \end{"}=\\
+This environment is optional.  It generates a page from the specified text, which should contain the author's \textit{personal vita}.  That is, it a short biography, not a professional \textit{curriculum vita}.  It should not include, for example, a list of publications.  The optional argument modifies the title typeset at the top of the page, which by default is ``Vita.''
+
+\item[Acknowledgements] \dotfill\ \verb=\begin{acknowledgements}[TITLE] TEXT \end{"}=\\
+This environment generates a page from the specified text, which should contain any acknowledgements of a personal or academic nature the author wishes to make of help or support while completing his or her thesis.  The optional argument modifies the title typeset at the top of the page, which by default is ``Acknowledgements.''  This might be useful, for example, if the author prefers the alternate spelling ``Acknowledgments.''
+
+\item[Abstract] \dotfill\ \verb=\begin{abstract} TEXT \end{"}=\\
+This environment automatically generates a formatted table of data drawn from the preamble, followed by the specified text.  The text should contain a short abstract of the thesis.  Note that FAU's 
+\href\guide{manuscript guidelines} 
+currently limit the abstract of a Master's Thesis to 150 words or fewer, and the abstract of a Doctoral Dissertation to 350 words or fewer.
+
+\item[\llap{*}Dedication] \dotfill\ \verb=\begin{dedication} TEXT \end{"}=\\
+or \dotfill\ \verb=\dedicate{TEXT}=\\
+This environment (or command) is optional.  It generates a single page dedicating the manuscript using the author's specified text.
+
+\item[Table of Contents] \dotfill\ \verb=\tableofcontents=\\
+This command generates a Table of Contents for the thesis.  \LaTeX\ compiles the information for this Table automatically each time it is run.  But bear in mind that the Table of Contents generally doesn't update fully in the final document until the second, or sometimes even the third, run.
+
+\item[List of Tables] \dotfill\ (\verb=\listoftables|\nolistoftables=)\\
+The \verb=\listoftables= command generates a List of Tables in the thesis.  \LaTeX\ compiles the information for this List automatically each time it is run.  But bear in mind that the List of Tables generally doesn't update fully in the final document until the second, or sometimes even the third, run.  The \verb=\nolistoftables= command skips over the List in the required order specified by the \code{fauthesis} document class.  It should be used \textit{only} when a thesis contains \textit{no} tables.
+
+\item[List of Figures] \dotfill\ (\verb=\listoffigures|\nolistoffigures=)\\
+The \verb=\listoffigures= command generates a List of Figures in the thesis.  \LaTeX\ compiles the information for this List automatically each time it is run.  But bear in mind that the List of Figures generally doesn't update fully in the final document until the second, or sometimes even the third, run.  The \verb=\nolistoffigures= command skips over the List in the required order specified by the \code{fauthesis} document class.  It should be used \textit{only} when a thesis contains \textit{no} figures.
+
+\end{description}
+
+Some disciplines may have style conventions that include other tables, such as a List of Theorems for example, in the front matter.  The author may define commands or load package files that implement such tables, which should appear only after all of the required front matter listed above.  As long as the \LaTeX\ source generating the table begins with a standard \verb=\chapter*= command, its appearance should be consistent with that of the Table of Contents and Lists of Tables and Figures.  Bear in mind, however, that the Graduate College reserves the right to question its inclusion.
+
+
+
+\section{Main Matter and Beyond}\label{main}
+
+The main matter of the thesis begins with the \verb=\mainmatter= command, which resets the page number and starts numbering with Arabic numerals rather than lowercase Roman numerals.  This should be followed immediately by the first \verb=\chapter= command.  If any Appendices are included, they must be preceded by the \verb=\backmatter= command.  This resets the \code{chapter} counter and starts labeling chapters with uppercase Latin letters rather than Arabic numerals.  Each Appendix begins with an ordinary \verb=\chapter= command.
+
+
+\subsection{Formatting Chapter and Section Headings}\label{S:headings}
+
+The \code{fauthesis} document class provides some simple ways to change the appearance of the headings at the tops of chapters, sections, subsections, and so forth.  It also allows authors to change the formatting of the title of the thesis on the title page.
+%
+\begin{description}
+
+\item[Define Chapter Headings] \dotfill\ \verb=\chapterheadformat{BLOCK}{CHAPTER}{TITLE}{SKIP}=\\
+This command sets the code used to generate headings to chapters.  The \code{BLOCK} argument gives line spacing and alignment commands to apply to the entire heading block.  The \code{CHAPTER} argument describes how to format the chapter number.  It may use the commands \verb=\chaptertype= to represent the type of chapter (\textit{i.e.}, Chapter or Appendix) and \verb=\chapternumber= to represent the number (or letter) of the chapter.  These are expanded internally.  The \code{TITLE} argument specifies how to format the chapter title given as an argument to the \verb=\chapter= command in the text.  It may use the \verb=\chatpertitle= command to represent the text of the title.  Again, this will be expanded internally.  Finally, the \code{SKIP} argument specifies spacing and other material to include after the title.  For example, the \code{classicchapters} class option described above executes 
+%
+{\small\begin{verbatim}
+\chapterheadformat
+	{\sesquispacing\raggedleft}%
+	{{\Large\bfseries\chaptertype\ \chapternumber\par}\vskip2.0ex}%
+	{{\LARGE\bfseries\boldmath\chaptertitle\par}}%
+	{\vskip5.0ex\hrule\vskip5.0ex}
+\end{verbatim}}
+%
+at the beginning of the document.  Note that the placement of the \verb=\par= commands in the second and third arguments is important since \TeX\ calculates the space between lines using the current font size, which will have reverted to the default once the group has closed.  The \code{simplechapters} class option executes 
+%
+{\small\begin{verbatim}
+\chapterheadformat
+	{\doublespacing\centering}%
+	{{\bfseries\MakeTextUppercase{\chaptertype\ \chapternumber}\par}}%
+	{{\bfseries\boldmath\MakeTextUppercase{\chaptertitle}\par}}%
+	{\vskip5.0ex}
+\end{verbatim}}
+%
+instead.  Authors are free to design their own chapter headings, but of course are then on their own with regard to the format review.
+
+\item[Format Section Titles] \dotfill\ \verb=\renewcommand\sectionstyle{STYLE}=\\
+	\null\hfill\ \verb=\renewcommand\subsectionstyle{STYLE}=\\
+	\null\hfill\ \verb=\renewcommand\subsubsectionstyle{STYLE}=\\
+	\null\hfill\ \verb=\renewcommand\paragraphstyle{STYLE}=\\
+	\null\hfill\ \verb=\renewcommand\subparagraphstyle{STYLE}=\\
+Redefining any of these commands modifies the font in which the numbers and titles of the corresponding parts of the documented are formatted for output.  For example, by default the \code{fauthesis} document class sets 
+%
+{\small\begin{verbatim}
+\newcommand\sectionstyle{\normalsize\bfseries\boldmath\MakeTextUppercase}
+\end{verbatim}}
+%
+This causes section titles to be set in bold, with bold math wherever applicable, and in all capital letters, unless specified otherwise by the author (see below).  The other commands in this list work similarly.
+
+\item[Controlling Capitalization] \dotfill\ \verb=\MakeTextUppercase{TITLE}=\\
+This command capitalizes all text in its argument \code{TITLE}, but excludes any material set in math mode (\textit{i.e.}, surrounded by a pair of \verb=$= or by \verb=\(= and \verb=\)= markup).  This can be useful because generally things like mathematical expressions and chemical formulae have different technical meanings when they are capitalized differently.  The basic technique has been stolen from the \code{textcase} package \cite{C:textcase}, and reduced to a simpler but less flexible form.  This keeps the \code{fauthesis} document class independent of the \code{textcase} package, while retaining the basic functionality needed in chapter and section titles.  Loading the original package should restore its full functionality without creating incompatibility issues.
+\end{description}
+
+
+\subsection{Other Modifications and Notes}
+
+There are a few standard \LaTeX\ commands and environments that are modified by the \code{fauthesis} document class.  We note these here.
+%
+\begin{description}
+
+\item[Figure and Table Captions]
+The \verb=\caption= command is modified so that captions appear (a) in a slightly smaller font than usual, (b) single-spaced, and (c) centered on the page in a column that is somewhat narrower than the width of the text.  The width of the caption is controlled by the \verb=\capwidth= length, which the author may change from its default value of \verb=0.8\textwidth= (i.e., 80\%\ of the width of the text on the page).  The author may issue the command \verb=\setlength\capwidth{DIMEN}= to change the caption width either (a) inside a particular float (i.e., \code{figure} or \code{table}) environment to change the width of just that one caption or (b) in the preamble to change the default width globally.  Note that any package the author loads that overwrites the internal \LaTeXe\ \verb=\@makecaption= command will overwrite these changes to that command made by the \code{fauthesis} class.  If the \verb=\caption= command is not working as described here, this is probably what has happened.
+
+\item[Footnotes and Quotations]
+The \verb=\footnote= command and the \code{quotation} environment are both modified to typeset their contents single-spaced.
+
+\item[Generating Table of Contents Entries]
+The commands that generate individual lines of the Table of Contents and Lists of Tables and Figures are modified to be typeset single-spaced.  Note that, to avoid excessively long entries in the Table of Contents, most of \LaTeX's sectioning commands take an optional argument.  For example, \verb=\chapter[SHORT]{TITLE}= will produce a chapter entitled \code{TITLE} in the main body of the text, but which will have the title \code{SHORT} in the Table of Contents.  The \verb=\section= and \verb=\subsection= commands work similarly.  The \verb=\caption[SHORT]{CAPTION}= command likewise allows long captions for Tables and Figures, while keeping entries in the corresponding Lists short.  This is a very useful, and oft overlooked, feature of standard \LaTeXe.
+
+\item[Single- and Sesqui-Spacing]
+The author may wish to typeset other (short!)\ portions of his or her thesis single-spaced.  Please consult FAU's 
+\href\guide{manuscript guidelines} 
+for, well, guidelines on doing this.  There are two ways to switch the spacing convention locally.  One is to put either the \verb=\singlespacing= command, for single spacing, or \verb=\sesquispacing= command, for one-and-a-half spacing, inside a surrounding group or environment so that \TeX\ will revert to the default spacing afterward.  Alternatively, one can put a block of text in either the \code{singlespace} or \code{sesquispace} environment to accomplish the same thing if there is no surrounding group or environment.
+
+\item[Bibliography]
+The \code{thebibiliography} environment is modified so that the Bibliography is included in the Table of Contents.  This is not the case by default in \LaTeXe.  Also, individual bibliography entries are typeset single-spaced, with a gap roughly equal to an empty line between them.
+
+\end{description}
+
+
+
+\appendix
+
+
+
+\section{Version History}
+
+\begin{description}
+\item[Version 1.0] \dotfill\ 9 September 2014\\
+First Release.  (Less than five years.  Not bad.)
+Changed the default document margins according to the updated guidelines.  Removed outdated formatting options for the signature page.  Changed signature blocks to wrap the text below the blank line rather than overflow.  Made committee and administration signature lines have the same length.  Changed the text of the copyright statement.  Changed the page numbering convention for the dedication page.  Modified the heading style for appendices.  Added the \verb=\dedicate= command for short dedications.
+
+\item[Final Beta Candidate 0.9.1] \dotfill\ 27 June 2012\\
+Minor Beta Update.  
+Added commands to \verb=\listoftables= and \verb=\listoffigures= to set PDF link targets properly when using the \code{hyperref} package.  No change in syntax.  Thanks to George Reifenberger for spotting the problem.
+
+\item[Final Beta Candidate 0.90] \dotfill\ 19 October 2012\\
+Final Beta Update.  
+Added the \code{print} class option to override user settings for the \code{hyperref} package, if it is loaded, which could cause text to be colored inappropriately in the printed version.  Added the \code{online} class option, which leaves the \code{hyperref} colors as set by the user.  Modified the \verb=\endmatter= command to revert to \code{simplechapters} heading styles for the appendices, per Graduate College requirements.
+
+\item[Beta Version 0.82] \dotfill\ 9 November 2011\\
+Minor Beta Update.  Changed the \verb=\dedication= command to the \code{dedication} environment and introduced class options to control the formatting of the dedication page.  Based on conversations with Debra Szabo in the Graduate College.
+
+\item[Beta Version 0.81] \dotfill\ 19 October 2011\\
+Minor Beta Update.  Fixed the approach to controlling capitalization in chapter and section titles in order to make it compatible with the \code{hyperref} package.  Based on comments by Olga Malkina.
+
+\item[Beta Version 0.8] \dotfill\ 7 October 2011\\
+Fourth Beta Release.  Included class options to control formatting of the headings for the Table of Contents and Lists of Figures and Tables.  Developed a simple scheme for allowing thesis authors to control the formatting of chapter headings.  Introduced commands to allow temporary suppression of automatic capitalization in section titles.  Based on suggestions by Olga Malkina, Korey Sorge, and Konstantin Yakunin.
+
+\item[Beta Version 0.7] \dotfill\ 9 October 2010\\
+Third Beta Release.  Made normal font size the default for signature spaces on the signature page per Graduate College request.  Introduced the commands described in Section \ref{signature} to modify the appearance of the signature page.
+
+\item[Beta Version 0.6] \dotfill\ 12 July 2010\\
+Second Beta Release.  Modified Table of Contents formatting per Graduate College request.  Specified US Letter page size if running PDF\LaTeX, and disabled all other page size options in the \LaTeXe\ \code{report} class.  Modified bibliography to set individual items single-spaced.  Introduced environments for single-, sesqui- and double-spacing and changed corresponding command names to match \LaTeXe\ conventions.
+
+\item[Beta Version 0.5] \dotfill\ 5 June 2010\\
+Initial Beta Release.  Removed unused class options.  First version of this guide.
+
+\item[Alpha Version 0.4] \dotfill\ 6 April 2010\\
+Initial Alpha Release.  Modified and corrected based on suggestions by Summer Rankin, Slava Murzin and Armin Fuchs.  Incorporated (as yet undocumented) commands to control title and chapter heading formats.
+
+\item[Draft Version 0.3] \dotfill\ 21 March 2010\\
+Final draft version.  Added initial implementation of the \code{coadvisors} class option.
+
+\item[Draft Version 0.2] \dotfill\ 11 March 2010\\
+Revised draft version.  Included modifications based on numerous, helpful suggestions by Connie Sokolowski from the Graduate College.
+
+\item[Draft Version 0.1] \dotfill\ 14 January 2010\\
+Initial draft version.  Modified the author's original thesis document class used to generate his own doctoral thesis.
+\end{description}
+
+
+
+\section{Known Incompatibilities}\label{incomp}
+
+The following packages are incompatible with the \code{fauthesis} document class.  In most cases, the source will compile perfectly, but the margins will not be right.  Authors encountering such problems should make sure their source does not load any of these packages.
+
+\begin{description}
+\item[geometry.sty] Modifies page size and margins.
+\item[sectsty.sty] Modifies chapter headings.
+\end{description}
+
+
+
+\begin{thebibliography}{M}
+
+\bibitem{GC:guide}
+\textit{Graduat	e Thesis and Dissertation Guidelines}.
+Online publication of the Florida Atlantic University Graduate College.
+Version dated March 2014.
+Cited 9 September 2014.\\
+\expandafter\url\guide.
+
+\bibitem{L:latex}
+L.~Lamport.
+\textit{\LaTeX: A Document Preparation System}.
+Addison--Wesley, Reading, Massachusetts, 2nd Edition, 1994.
+
+\bibitem{KD:guide}
+H.~Kopka and P.W.~Daly.
+\textit{A Guide to \LaTeXe: Document Preparation for Beginners and Advanced Users}.
+Addison--Wesley, Reading, Massachusetts, 2nd Edition, 1995.
+
+\bibitem{L3:latex2e}
+\textit{\LaTeXe for authors}.
+Online publication of the \LaTeX3 Project Team.
+Cited 5 June 2010.\\
+\url{http://www.latex-project.org/guides/usrguide.pdf}.
+
+\bibitem{OPHS:intro}
+T.~Oetiker, H.~Partl, I.~Hyna and E.~Schlegl.
+\textit{The Not So Short Introduction to \LaTeXe}.
+Version 4.27, December 13, 2009.
+Online publication of the authors.
+Cited 5 June 2010.\\
+\url{http://ctan.tug.org/tex-archive/info/lshort/english/lshort.pdf}.
+
+\bibitem{WB:latex}
+\textit{\LaTeX}.
+Online publication of WikiBooks contributors.
+Cited 5 June 2010.\\
+\url{http://en.wikibooks.org/wiki/LaTeX}.
+
+\bibitem{C:textcase}
+D.~Carlisle.
+The \code{textcase} package.
+Online users' manual dated 7 October 2004, cited 19 October 2011.
+\url{http://ctan.org/tex-archive/macros/latex/contrib/textcase/}
+\end{thebibliography}
+
+
+\end{document}
